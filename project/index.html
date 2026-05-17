@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prairie Wagon Survival</title>
+    <meta charset="utf-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            overflow: hidden;
+            background: #1a0a00;
+            font-family: 'Georgia', serif;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* CGF appends its canvas directly to body — make sure it fills the viewport */
+        body > canvas {
+            display: block;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        /* ── HUD overlay ─────────────────────────────────────────── */
+        #hud {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            color: #f5deb3;
+            background: rgba(60, 30, 0, 0.82);
+            border: 2px solid #a0522d;
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 15px;
+            min-width: 220px;
+            pointer-events: none;
+            z-index: 100;
+        }
+        #hud h2 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: #ffd700;
+            text-shadow: 0 1px 4px #000;
+            letter-spacing: 1px;
+        }
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 3px 0;
+            gap: 12px;
+        }
+        .hud-label { color: #d2b48c; }
+        .hud-value { color: #fff; font-weight: bold; }
+        #hp-bar-bg {
+            background: #3a1a00;
+            border-radius: 4px;
+            height: 12px;
+            margin: 6px 0 2px 0;
+            overflow: hidden;
+            border: 1px solid #a0522d;
+        }
+        #hp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #2ecc71);
+            transition: width 0.4s;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        /* ── Controls hint ───────────────────────────────────────── */
+        #controls-hint {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            color: #d2b48c;
+            background: rgba(40, 20, 0, 0.75);
+            border: 1px solid #a0522d;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 13px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* ── Game-over screen ────────────────────────────────────── */
+        #game-over {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.78);
+            color: #f5deb3;
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-family: Georgia, serif;
+        }
+        #game-over h1  { font-size: 54px; color: #e74c3c; margin-bottom: 10px; text-shadow: 0 2px 16px #000; }
+        #game-over p   { font-size: 22px; color: #ffd700; }
+        #game-over button {
+            margin-top: 24px;
+            padding: 12px 36px;
+            font-size: 18px;
+            background: #a0522d;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            letter-spacing: 1px;
+        }
+        #game-over button:hover { background: #cd853f; }
+
+        /* ── Damage / heal flash ─────────────────────────────────── */
+        #flash {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 150;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+    </style>
+</head>
+<body>
+    <!-- CGF creates and appends its own <canvas> to document.body on app.init() -->
+
+    <div id="hud">
+        <h2>🌾 Prairie Survival</h2>
+        <div id="hp-bar-bg"><div id="hp-bar"></div></div>
+        <div class="hud-row"><span class="hud-label">❤️ Health:</span>   <span class="hud-value" id="hud-hp">100</span></div>
+        <div class="hud-row"><span class="hud-label">⏱ Score:</span>     <span class="hud-value" id="hud-score">0s</span></div>
+        <div class="hud-row"><span class="hud-label">🌾 Bales:</span>     <span class="hud-value" id="hud-bales">0/2</span></div>
+        <div class="hud-row"><span class="hud-label">📦 Delivered:</span> <span class="hud-value" id="hud-delivered">0</span></div>
+        <div class="hud-row"><span class="hud-label">💥 Damage:</span>    <span class="hud-value" id="hud-damage">0</span></div>
+        <div class="hud-row"><span class="hud-label">💚 Healed:</span>    <span class="hud-value" id="hud-healed">0</span></div>
+    </div>
+
+    <div id="controls-hint">
+        W/S — Speed &nbsp;|&nbsp; A/D — Steer &nbsp;|&nbsp; P — Pick Bale &nbsp;|&nbsp; L — Drop Bale
+    </div>
+
+    <div id="game-over">
+        <h1>☠ Game Over</h1>
+        <p>You survived <span id="final-score">0</span> seconds!</p>
+        <p>Hay bales delivered: <span id="final-bales">0</span></p>
+        <button onclick="location.reload()">Play Again</button>
+    </div>
+
+    <div id="flash"></div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
